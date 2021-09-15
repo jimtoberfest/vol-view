@@ -14,7 +14,7 @@ server = app.server
 #Taken from https://www.ecdc.europa.eu/en/geographical-distribution-2019-ncov-cases
 
 # *Using Data from GitHub
-df = pd.read_csv(" https://github.com/Coding-with-Adam/Dash-by-Plotly/blob/f4b4607634c30fad71a52430a7464ebef6fed84e/Deploy_App_to_Web/Heroku_App/COVID-19-geographic-disbtribution-worldwide-2020-03-29.csv")
+df = pd.read_csv("https://raw.githubusercontent.com/Coding-with-Adam/Dash-by-Plotly/master/Deploy_App_to_Web/Heroku_App/COVID-19-geographic-disbtribution-worldwide-2020-03-29.csv")
 
 # Using Data Locally
 # df = pd.read_csv("COVID-19-geographic-disbtribution-worldwide-2020-03-29.csv")
