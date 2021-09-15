@@ -24,7 +24,7 @@ print (dff[:5])
 #---------------------------------------------------------------
 app.layout = html.Div([
     html.Div([
-        html.H1('Hello Dash'),
+        html.H1('Global Covid-19 Dashboard'),
         dash_table.DataTable(
             id='datatable_id',
             data=dff.to_dict('records'),
