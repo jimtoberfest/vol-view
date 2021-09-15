@@ -1,0 +1,5 @@
+.venv
+.DS_Store
+hello.py
+jup_nb_1.ipynb
+__pychache__
