@@ -33,21 +33,21 @@ app.layout = html.Div([
         id='textarea-state-example',
         # value='Textarea content initialized\nwith multiple lines of text',
         value='',
-        style={'width': '100%', 'height': 200},
+        style={'width': '100%', 'height': 100},
     ),
     html.Button('Submit', id='textarea-state-example-button', n_clicks=0),
     html.Div(id='textarea-state-example-output',
              style={'whiteSpace': 'pre-line'}),
     html.Hr(),
-    # html.Div(
+    html.Div(id = 'blocks_table')
         
-    dash_table.DataTable(
-        id='blocks_table',
-        data=(),
-        columns=[{"name": i, "id": i} for i in block_columns],
-        # columns=[],
-        )
-    # )
+    # dash_table.DataTable(
+    #     id='blocks_table',
+    #     data=(),
+    #     columns=[{"name": i, "id": i} for i in block_columns],
+    #     # columns=[],
+    #     )
+
 
 ])
 
@@ -55,7 +55,7 @@ app.layout = html.Div([
 @app.callback(
     Output('textarea-state-example-output', 'children'),
 
-    Output('blocks_table', 'data'),  # ! New Output!
+    # Output('blocks_table', 'data'),  # ! New Output!
 
     Input('textarea-state-example-button', 'n_clicks'),
     State('textarea-state-example', 'value')
@@ -71,7 +71,23 @@ def update_output(n_clicks, value):
         df_blocks = input2df(value)
         print('\n', df_blocks)
 
-        return 'You have entered: \n{}\n{}'.format(type(value), ''), df_blocks.to_dict('records')
+        return 'You have entered: \n{}\n{}'.format(type(value), '')#, df_blocks.to_dict('records')
+    
+
+@app.callback(
+    Output('blocks_table', 'children'),  # ! New Output!
+    Input('textarea-state-example-button', 'n_clicks'),
+    State('textarea-state-example', 'value')
+)
+def update_datatable(n_clicks,value):            
+    if n_clicks > 0:                            
+        
+        df_blocks = input2df(value)
+        
+        # dfgb = df.groupby(['state']).sum()
+        records = df_blocks.to_dict('rows')
+        columns =  [{"name": i, "id": i,} for i in (df_blocks.columns)]
+        return dash_table.DataTable(data=records, columns=columns, page_size=15)
 
 
 if __name__ == '__main__':
