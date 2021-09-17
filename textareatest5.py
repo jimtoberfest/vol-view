@@ -172,4 +172,4 @@ def render_content(n_clicks, value, tab):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
