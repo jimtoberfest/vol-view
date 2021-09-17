@@ -1,8 +1,9 @@
 import dash
 from dash.dependencies import Input, Output, State
 from dash import html
-from dash import  dcc
+from dash import dcc
 from dash import dash_table
+from dash.html.H4 import H4
 import pandas as pd
 
 app = dash.Dash(__name__)
@@ -10,10 +11,6 @@ app = dash.Dash(__name__)
 # *Functions to use...
 
 # Function to take multi-line text input from TextArea and create a DataFrame
-
-block_columns = ['Time', 'Strike', 'Term', 'Instrument Type', 'Strategy', 'Type', 'CC',
-                 'Product', 'Description', 'Price', 'Qty', 'Watch', 'RFQ', 'Add Deal',
-                 'Undrl. Bid', 'Undrl. Offer', 'Impl. Vol', 'Δ', 'Category', '']
 
 
 def input2df(estr, sep='\t', lineterm='\n', header=True):
@@ -39,14 +36,7 @@ app.layout = html.Div([
     html.Div(id='textarea-state-example-output',
              style={'whiteSpace': 'pre-line'}),
     html.Hr(),
-    html.Div(id = 'blocks_table')
-        
-    # dash_table.DataTable(
-    #     id='blocks_table',
-    #     data=(),
-    #     columns=[{"name": i, "id": i} for i in block_columns],
-    #     # columns=[],
-    #     )
+    html.Div(id='blocks_table')
 
 
 ])
@@ -54,9 +44,6 @@ app.layout = html.Div([
 
 @app.callback(
     Output('textarea-state-example-output', 'children'),
-
-    # Output('blocks_table', 'data'),  # ! New Output!
-
     Input('textarea-state-example-button', 'n_clicks'),
     State('textarea-state-example', 'value')
 )
@@ -71,26 +58,36 @@ def update_output(n_clicks, value):
         df_blocks = input2df(value)
         print('\n', df_blocks)
 
-        return 'You have entered: \n{}\n{}'.format(type(value), '')#, df_blocks.to_dict('records')
-    
+        # , df_blocks.to_dict('records')
+        return 'You have entered: \n{}\n{}'.format(type(value), '')
+
 
 @app.callback(
-    Output('blocks_table', 'children'),  # ! New Output!
+    Output('blocks_table', 'children'),
     Input('textarea-state-example-button', 'n_clicks'),
     State('textarea-state-example', 'value')
+
 )
-def update_datatable(n_clicks,value):            
-    if n_clicks > 0:                            
-        
+def update_datatable(n_clicks, value):
+    if n_clicks > 0:
         df_blocks = input2df(value)
-        
-        # dfgb = df.groupby(['state']).sum()
         records = df_blocks.to_dict('rows')
-        columns =  [{"name": i, "id": i,} for i in (df_blocks.columns)]
+        columns = [{"name": i, "id": i, } for i in (df_blocks.columns)]
         return html.Div([
-            dcc.Dropdown(id='contract-drop', multi=True,  # new to True from False
-                                    options=[{'label':i, 'value': i} for i in df_blocks.columns],
-                                    placeholder='Select some Stuff'),
+            H4('Title'),
+
+            html.Div([dcc.Dropdown(id='groupby-drop', multi=True,  # new to True from False
+                                   options=[{'label': i, 'value': i}
+                                            for i in df_blocks.columns],
+                                   placeholder='Select for GroupBy'
+                                   #    style = {"width": "50%"}
+                                   ),
+                      html.Button(
+                          'Group', id='block-groupby-button', n_clicks=0),
+                      html.Button('Sum', id='sum-groupby-button', n_clicks=0)],
+                     style={"width": "50%", "display": "inline-block"}
+                     ),
+
             html.Hr(),
             dash_table.DataTable(data=records, columns=columns, page_size=15)
         ])
@@ -98,8 +95,3 @@ def update_datatable(n_clicks,value):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
-
-'''
-dash._grouping.SchemaTypeValidationError: Schema: [<Output `textarea-state-example-output.children`>, <Output `blocks_table.data`>]
-'''
