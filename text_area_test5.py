@@ -38,7 +38,8 @@ app.layout = html.Div([
     html.Button('Submit', id='textarea-state-example-button', n_clicks=0),
     html.Div(id='textarea-state-example-output',
              style={'whiteSpace': 'pre-line'}),
-
+# *-----------------------------------------------------------------------
+    
     html.Hr(),
 
     html.Div([
@@ -48,6 +49,7 @@ app.layout = html.Div([
         ]),
 
         html.Div(id='tabs-example-content'),
+        
         html.Hr(),
     ]),
 
