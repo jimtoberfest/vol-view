@@ -110,13 +110,12 @@ def render_content(n_clicks, value, tab):
             #     data=summation_records, columns=summation_columns, page_size=15, sort_action='native', filter_action='native'),
             dash_table.DataTable(
                 data=g_records, columns=g_columns, page_size=15, sort_action='native', filter_action='native')
-        ]
+        ])
     elif tab == 'tab-3':
         return html.Div([
             html.H3('Tab content 3'),
             dash_table.DataTable(  # *g3 summation Table
                 data=summation_records, columns=summation_columns, page_size=15, sort_action='native', filter_action='native')
-
         ])
     else:
         print('else...')
