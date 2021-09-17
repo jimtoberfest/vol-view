@@ -7,6 +7,7 @@ from dash.html.H4 import H4
 import pandas as pd
 
 app = dash.Dash(__name__)
+server = app.server  # !Comment this out to work locally
 
 # *Functions to use...
 
