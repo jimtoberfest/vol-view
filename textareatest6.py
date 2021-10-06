@@ -70,6 +70,11 @@ def render_content(n_clicks, value, tab):
         print('n is over 1')
         try:
             df_blocks = input2df(value)
+            
+            #! Following code added to deal with commas in large numbers.
+            # df_blocks.to_csv('df_blocks_pre_manipulation.csv', index=False) #for testing
+            df_blocks['Qty'] = (df_blocks['Qty'].replace(',','', regex=True).astype(float))            
+            
             df_blocks['Qty'] = df_blocks['Qty'].apply(pd.to_numeric, errors='coerce')
             df_blocks['Strike'] = df_blocks['Strike'].apply(pd.to_numeric, errors='coerce')
             df_blocks['Price'] = df_blocks['Price'].apply(pd.to_numeric, errors='coerce')
