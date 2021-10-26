@@ -16,6 +16,21 @@ server = app.server  # !Comment this out to work locally
 records = {}
 g_records = {}
 
+month_dict = {
+    'Jan' : 1,
+    'Feb' : 2,
+    'Mar' : 3,
+    'Apr' : 4,
+    'May' : 5,
+    'Jun' : 6,
+    'Jul' : 7,
+    'Aug' : 8,
+    'Sep' : 9,
+    'Oct' : 10,
+    'Nov' : 11,
+    'Dec' : 12
+    }
+
 def input2df(estr, sep='\t', lineterm='\n', header=True):
     dat = [x.split(sep) for x in estr.split(lineterm)]
     cdf = pd.DataFrame(dat)
@@ -107,9 +122,8 @@ def render_content(n_clicks, value, tab):
             summation_columns = [{"name": i, "id": i, } for i in (g3.columns)]
             
             
-            # *Build out fourth Tab for strips
             df_strip = df_blocks.copy() #! Change to fit df_blocks
-            # df_strip['Qty'] = pd.to_numeric(df_strip['Qty'], errors='coerce')
+            df_strip['Qty'] = pd.to_numeric(df_strip['Qty'], errors='coerce')
 
             strip_totals = df_strip.groupby(['Time', 'Strike', 'Strategy'])['Qty'].transform('sum').fillna(0)
             strip_counts = df_strip.groupby(['Time', 'Strike', 'Strategy'])['Qty'].transform('count').fillna(0)
@@ -126,10 +140,16 @@ def render_content(n_clicks, value, tab):
             df_strip['strip_last'] = strip_last
             df_strip['Strip_Term'] = strip_first + " : " + strip_last
 
+            df_strip['s1_num'] = df_strip['strip_first'].apply(lambda x: month_dict[x[:3]])
+            df_strip['s2_num'] = df_strip['strip_last'].apply(lambda x: month_dict[x[:3]])
+            df_strip['Strip_Length'] = df_strip['s2_num'] - df_strip['s1_num'] + 1
 
-            df_strip_agg = df_strip.groupby(['Time','Type','CC', 'Strip_Term', 'Strategy', 'Strike'])['Qty'].sum().reset_index()
+
+            df_strip_agg = df_strip.groupby(['Time','Type','CC', 'Strip_Term', 'Strategy', 'Strike', 'Strip_Length'])['Qty'].sum().reset_index()
             df_strip_agg = df_strip_agg.sort_values('Qty', ascending=False)
             df_strip_agg = df_strip_agg.reset_index(drop=True)
+
+            df_strip_agg['Qty_per_Mo'] = df_strip_agg['Qty'] / df_strip_agg['Strip_Length']
 
             
             
