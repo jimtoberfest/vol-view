@@ -5,6 +5,7 @@ from dash import dcc
 from dash import dash_table
 from dash.html.H4 import H4
 import pandas as pd
+import numpy as np
 
 app = dash.Dash(__name__)
 server = app.server  # !Comment this out to work locally
@@ -131,7 +132,7 @@ def render_content(n_clicks, value, tab):
             df_strip['Qty_Strip'] = strip_totals
             df_strip['Strip_Count'] = strip_counts
             df_strip = df_strip.sort_values(['Qty_Strip', 'Strike'], ascending=False).head(100)
-            df_strip = df_strip[df_strip['Strip_Count'] > 2]
+            df_strip = df_strip[df_strip['Strip_Count'] > 1]
 
             strip_first = df_strip.groupby(['Time', 'Strike', 'Strategy'])['Term'].transform('first').fillna(0)
             strip_last = df_strip.groupby(['Time', 'Strike', 'Strategy'])['Term'].transform('last').fillna(0)
@@ -140,17 +141,32 @@ def render_content(n_clicks, value, tab):
             df_strip['strip_last'] = strip_last
             df_strip['Strip_Term'] = strip_first + " : " + strip_last
 
-            df_strip['s1_num'] = df_strip['strip_first'].apply(lambda x: month_dict[x[:3]])
-            df_strip['s2_num'] = df_strip['strip_last'].apply(lambda x: month_dict[x[:3]])
-            df_strip['Strip_Length'] = df_strip['s2_num'] - df_strip['s1_num'] + 1
+            # df_strip['s1_num'] = df_strip['strip_first'].apply(lambda x: month_dict[x[:3]])
+            # df_strip['s2_num'] = df_strip['strip_last'].apply(lambda x: month_dict[x[:3]])
+            # df_strip['Strip_Length'] = df_strip['s2_num'] - df_strip['s1_num'] + 1
+
+
+            # df_strip_agg = df_strip.groupby(['Time','Type','CC', 'Strip_Term', 'Strategy', 'Strike', 'Strip_Length'])['Qty'].sum().reset_index()
+            # df_strip_agg = df_strip_agg.sort_values('Qty', ascending=False)
+            # df_strip_agg = df_strip_agg.reset_index(drop=True)
+
+            # df_strip_agg['Qty_per_Mo'] = df_strip_agg['Qty'] / df_strip_agg['Strip_Length']
+
+            # *New code converts string dates to timestamps to deal with seasonality edge cases in strips
+
+            df_strip['month_1'] = pd.to_datetime(df_strip['strip_first'], format='%b%y')
+            df_strip['month_2'] = pd.to_datetime(df_strip['strip_last'], format='%b%y')
+            df_strip['Strip_Length'] = ((df_strip['month_2'] - df_strip['month_1']) / np.timedelta64(1, 'M')).astype('int') + 1
+
 
 
             df_strip_agg = df_strip.groupby(['Time','Type','CC', 'Strip_Term', 'Strategy', 'Strike', 'Strip_Length'])['Qty'].sum().reset_index()
             df_strip_agg = df_strip_agg.sort_values('Qty', ascending=False)
+            df_strip_agg= df_strip_agg[df_strip_agg['Strip_Length'] > 1]
             df_strip_agg = df_strip_agg.reset_index(drop=True)
 
             df_strip_agg['Qty_per_Mo'] = df_strip_agg['Qty'] / df_strip_agg['Strip_Length']
-
+            
             
             
             strips_records = df_strip_agg.to_dict('records')
