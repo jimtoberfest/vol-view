@@ -178,14 +178,14 @@ def render_content(n_clicks, value, tab):
 
     if tab == 'tab-1':
         return html.Div([
-            html.H3('Tab content 1'),
+            html.H3('Raw Data'),
             html.Button("Tab 1 Button", id="btn_T1"),
             dash_table.DataTable(
                 data=records, columns=columns, page_size=15, sort_action='native', filter_action='native')
         ])
     elif tab == 'tab-2':
         return html.Div([
-            html.H3('Tab content 2'),
+            html.H3('Sorted by Volume'),
             # dash_table.DataTable(  # *g3 summation Table
             #     data=summation_records, columns=summation_columns, page_size=15, sort_action='native', filter_action='native'),
             dash_table.DataTable(
@@ -193,13 +193,13 @@ def render_content(n_clicks, value, tab):
         ])
     elif tab == 'tab-3':
         return html.Div([
-            html.H3('Tab content 3'),
+            html.H3('Sorted by Product'),
             dash_table.DataTable(  # *g3 summation Table
                 data=summation_records, columns=summation_columns, page_size=15, sort_action='native', filter_action='native')
         ])
     elif tab == 'tab-4':
         return html.Div([
-            html.H3('Tab content 4'),
+            html.H3('Strips'),
             dash_table.DataTable(  # *g4 strip Table
                 data=strips_records, columns=strips_columns, page_size=15, sort_action='native', filter_action='native')
         ])    
