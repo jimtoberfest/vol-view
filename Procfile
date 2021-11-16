@@ -1,1 +1,1 @@
-web: gunicorn textareatest11_BNS_1:server
+web: gunicorn textareatest12_BNS_4_tabs:server
